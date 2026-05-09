@@ -20,6 +20,23 @@ In this app, **product and project images are not files on disk** — each `Medi
 
 ---
 
+## Create or reset an admin user (VPS)
+
+After `git pull`, use production `.env` (`DATABASE_URL` must point at the live database):
+
+```bash
+cd /var/www/backstage
+export ADMIN_EMAIL="you@yourdomain.com"
+export ADMIN_PASSWORD='your-strong-password'
+export ADMIN_NAME="Admin"   # optional; defaults to Admin
+npm run db:create-admin
+pm2 restart backstage
+```
+
+If that email already exists, the row is **updated**: role becomes **ADMIN** and the password is replaced. Set env vars only in the SSH session; do not put `ADMIN_PASSWORD` in `.env` or commit it.
+
+---
+
 ## One-time full copy: `pg_dump` → `pg_restore`
 
 ### A. On your PC (export local DB)

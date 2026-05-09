@@ -1,0 +1,90 @@
+{
+  "brand": { "name": "Backstage" },
+  "nav": {
+    "shop": "Shop",
+    "backstage": "The Backstage",
+    "projects": "Projects",
+    "mixMatch": "Mix & Match",
+    "myStage": "My Stage",
+    "cart": "Cart",
+    "checkout": "Checkout",
+    "login": "Login",
+    "register": "Register",
+    "logout": "Logout",
+    "admin": "Admin",
+    "shopAll": "All products"
+  },
+  "home": {
+    "hero": "Architectural furniture, built with transparency.",
+    "ctaShop": "Shop collection",
+    "ctaBackstage": "See how we build",
+    "featured": "Featured pieces",
+    "featuredShopAll": "Shop all",
+    "featuredFrom": "From",
+    "newArrivals": "New arrivals",
+    "newArrivalsSubtitle": "Recently added pieces — explore the latest drops."
+  },
+  "shop": {
+    "title": "Shop",
+    "filterCategory": "Category",
+    "filterMaterial": "Material",
+    "filterColor": "Color",
+    "filterSize": "Size",
+    "filterPrice": "Price",
+    "clear": "Clear filters",
+    "empty": "No products match these filters."
+  },
+  "product": {
+    "from": "From",
+    "purchaseOptions": "Options & purchase",
+    "selectVariant": "Choose options",
+    "addToCart": "Add to cart",
+    "inStock": "In stock",
+    "outOfStock": "Out of stock"
+  },
+  "cart": {
+    "title": "Cart",
+    "empty": "Your cart is empty.",
+    "subtotal": "Subtotal",
+    "continue": "Continue shopping",
+    "toCheckout": "Checkout"
+  },
+  "checkout": {
+    "title": "Checkout",
+    "email": "Email",
+    "phone": "Phone",
+    "line1": "Address line 1",
+    "line2": "Address line 2",
+    "city": "City",
+    "zone": "Delivery zone",
+    "cod": "Cash on delivery",
+    "placeOrder": "Place order",
+    "success": "Order placed"
+  },
+  "myStage": {
+    "title": "My Stage",
+    "orders": "Orders",
+    "wishlist": "Wishlist",
+    "addresses": "Addresses"
+  },
+  "backstage": {
+    "title": "The Backstage"
+  },
+  "projects": {
+    "title": "Projects"
+  },
+  "mixMatch": {
+    "title": "Mix & Match",
+    "start": "Start quiz",
+    "result": "Your result"
+  },
+  "contact": {
+    "title": "Contact",
+    "submit": "Send",
+    "thankYou": "Thank you — we will reply soon."
+  },
+  "newsletter": {
+    "placeholder": "Email",
+    "submit": "Subscribe"
+  }
+}

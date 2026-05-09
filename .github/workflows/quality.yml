@@ -1,0 +1,64 @@
+# Vibrant, readable CI — proves lint + schema + production build on every PR
+name: "🎭 Backstage · quality spotlight"
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  quality:
+    name: "✨ Lint · DB · Build"
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: backstage
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d backstage"
+          --health-interval 4s
+          --health-timeout 5s
+          --health-retries 10
+
+    env:
+      DATABASE_URL: postgresql://postgres:postgres@localhost:5432/backstage?schema=public
+      DIRECT_URL: postgresql://postgres:postgres@localhost:5432/backstage?schema=public
+      AUTH_SECRET: backstage-ci-auth-secret-32chars-minimum-required
+      NEXT_PUBLIC_SITE_URL: http://localhost:3000
+
+    steps:
+      - name: "📥 Checkout"
+        uses: actions/checkout@v4
+
+      - name: "⚡ Node 20 + npm cache"
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+          cache-dependency-path: package-lock.json
+
+      - name: "📦 Install (clean ci)"
+        run: npm ci
+
+      - name: "🗃️ Prisma — sync schema to CI Postgres"
+        run: npx prisma db push
+
+      - name: "🔍 ESLint"
+        run: npm run lint
+
+      - name: "🏗️ Next.js production build"
+        run: npm run build
+
+      - name: "🎉 Green light"
+        run: 'echo "::notice title=Backstage CI::Lint + Prisma + build succeeded for ${{ github.sha }}"'

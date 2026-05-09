@@ -1,0 +1,342 @@
+// PostgreSQL — set DATABASE_URL in .env
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+enum UserRole {
+  CUSTOMER
+  ADMIN
+}
+
+enum MediaType {
+  IMAGE
+  VIDEO
+}
+
+enum OrderStatus {
+  PLACED
+  CONFIRMED
+  UNDER_MANUFACTURING
+  READY_TO_SHIP
+  SHIPPED
+  DELIVERED
+  WARRANTY_OR_FIX
+  CANCELLED
+}
+
+enum PaymentMethod {
+  COD
+  CARD
+  MEZA
+  WALLET
+  INSTAPAY
+  TELDA
+}
+
+model User {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  passwordHash String
+  name         String?
+  role         UserRole @default(CUSTOMER)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  orders            Order[]
+  addresses         Address[]
+  wishlist          WishlistItem[]
+  statusActorEvents OrderStatusHistory[] @relation("StatusActor")
+  auditLogs         AdminAuditLog[]
+}
+
+model Address {
+  id          String   @id @default(cuid())
+  userId      String
+  line1       String
+  line2       String?
+  city        String
+  governorate String?
+  phone       String
+  isDefault   Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Category {
+  id        String   @id @default(cuid())
+  parentId  String?
+  nameEn    String
+  nameAr    String
+  slug      String   @unique
+  sortOrder Int      @default(0)
+  published Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  parent   Category?           @relation("CategoryTree", fields: [parentId], references: [id])
+  children Category[]          @relation("CategoryTree")
+  products ProductCategory[]
+  primaryProducts Product[]    @relation("PrimaryCategory")
+}
+
+model Product {
+  id                  String   @id @default(cuid())
+  slug                String   @unique
+  titleEn             String
+  titleAr             String
+  descriptionEn       String   @default("")
+  descriptionAr       String   @default("")
+  metaTitleEn         String?
+  metaTitleAr         String?
+  metaDescriptionEn   String?
+  metaDescriptionAr   String?
+  published           Boolean  @default(false)
+  featured            Boolean  @default(false)
+  primaryCategoryId   String?
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+
+  primaryCategory Category?         @relation("PrimaryCategory", fields: [primaryCategoryId], references: [id])
+  categories      ProductCategory[]
+  variants        ProductVariant[]
+  media           Media[]
+  wishlistItems   WishlistItem[]
+}
+
+model ProductCategory {
+  productId  String
+  categoryId String
+
+  product  Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  category Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+
+  @@id([productId, categoryId])
+}
+
+model Material {
+  id     String @id @default(cuid())
+  nameEn String
+  nameAr String
+  slug   String @unique
+
+  variants ProductVariant[]
+}
+
+model Color {
+  id     String @id @default(cuid())
+  nameEn String
+  nameAr String
+  slug   String @unique
+
+  variants ProductVariant[]
+}
+
+model Size {
+  id     String @id @default(cuid())
+  nameEn String
+  nameAr String
+  slug   String @unique
+
+  variants ProductVariant[]
+}
+
+model ProductVariant {
+  id            String   @id @default(cuid())
+  productId     String
+  sku           String   @unique
+  materialId    String
+  colorId       String
+  sizeId        String
+  priceCents    Int
+  compareCents  Int?
+  enabled       Boolean  @default(true)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  product   Product    @relation(fields: [productId], references: [id], onDelete: Cascade)
+  material  Material   @relation(fields: [materialId], references: [id])
+  color     Color      @relation(fields: [colorId], references: [id])
+  size      Size       @relation(fields: [sizeId], references: [id])
+  inventory Inventory?
+  lines     OrderLine[]
+}
+
+model Inventory {
+  variantId       String @id
+  quantityOnHand  Int    @default(0)
+  reservedQty     Int    @default(0)
+
+  variant ProductVariant @relation(fields: [variantId], references: [id], onDelete: Cascade)
+}
+
+model Media {
+  id              String    @id @default(cuid())
+  productId       String?
+  projectId       String?
+  backstageId     String?
+  type            MediaType @default(IMAGE)
+  url             String
+  sortOrder       Int       @default(0)
+  altEn           String?
+  altAr           String?
+  createdAt       DateTime  @default(now())
+
+  product   Product?          @relation(fields: [productId], references: [id], onDelete: Cascade)
+  project   InteriorProject?  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  backstage BackstageArticle? @relation(fields: [backstageId], references: [id], onDelete: Cascade)
+}
+
+model WishlistItem {
+  userId    String
+  productId String
+  createdAt DateTime @default(now())
+
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@id([userId, productId])
+}
+
+model ShippingZone {
+  id                 String @id @default(cuid())
+  nameEn             String
+  nameAr             String
+  slug               String @unique
+  sortOrder          Int    @default(0)
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+
+  rateRules ShippingRateRule[]
+  orders    Order[]
+}
+
+model ShippingRateRule {
+  id           String  @id @default(cuid())
+  zoneId       String
+  labelEn      String?
+  labelAr      String?
+  feeCents     Int
+  minWeightKg  Float?
+  maxWeightKg  Float?
+  sortOrder    Int     @default(0)
+  createdAt    DateTime @default(now())
+
+  zone ShippingZone @relation(fields: [zoneId], references: [id], onDelete: Cascade)
+}
+
+model Order {
+  id               String         @id @default(cuid())
+  userId           String?
+  guestEmail       String?
+  guestPhone       String?
+  status           OrderStatus    @default(PLACED)
+  paymentMethod    PaymentMethod  @default(COD)
+  shippingZoneId   String
+  shippingLine1    String
+  shippingLine2    String?
+  shippingCity     String
+  shippingPhone    String
+  subtotalCents    Int
+  shippingCents    Int
+  totalCents       Int
+  internalNote     String?
+  createdAt        DateTime       @default(now())
+  updatedAt        DateTime       @updatedAt
+
+  user           User?                 @relation(fields: [userId], references: [id])
+  shippingZone   ShippingZone          @relation(fields: [shippingZoneId], references: [id])
+  lines          OrderLine[]
+  statusHistory  OrderStatusHistory[]
+}
+
+model OrderLine {
+  id             String @id @default(cuid())
+  orderId        String
+  variantId      String
+  quantity       Int
+  unitPriceCents Int
+
+  order   Order          @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  variant ProductVariant @relation(fields: [variantId], references: [id])
+}
+
+model OrderStatusHistory {
+  id           String        @id @default(cuid())
+  orderId      String
+  fromStatus  OrderStatus?
+  toStatus     OrderStatus
+  note         String?
+  actorUserId  String?
+  createdAt    DateTime      @default(now())
+
+  order Order @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  actor User? @relation("StatusActor", fields: [actorUserId], references: [id])
+}
+
+model InteriorProject {
+  id          String   @id @default(cuid())
+  slug        String   @unique
+  titleEn     String
+  titleAr     String
+  bodyEn      String   @default("")
+  bodyAr      String   @default("")
+  tags        String   @default("") // comma-separated for filters
+  published   Boolean  @default(true)
+  sortOrder   Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  media Media[]
+}
+
+model BackstageArticle {
+  id          String   @id @default(cuid())
+  slug        String   @unique
+  titleEn     String
+  titleAr     String
+  bodyEn      String   @default("")
+  bodyAr      String   @default("")
+  published   Boolean  @default(true)
+  sortOrder   Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  media Media[]
+}
+
+model QuizOutcome {
+  id             String   @id @default(cuid())
+  key            String   @unique
+  titleEn        String
+  titleAr        String
+  descriptionEn  String   @default("")
+  descriptionAr  String   @default("")
+  imageUrl       String?
+  sortOrder      Int      @default(0)
+}
+
+model SiteSetting {
+  key       String   @id
+  value     String   // JSON string for complex values
+  updatedAt DateTime @updatedAt
+}
+
+model AdminAuditLog {
+  id          String   @id @default(cuid())
+  adminUserId String
+  action      String
+  entityType  String
+  entityId    String?
+  metadata    String?  // JSON
+  createdAt   DateTime @default(now())
+
+  admin User @relation(fields: [adminUserId], references: [id], onDelete: Cascade)
+}

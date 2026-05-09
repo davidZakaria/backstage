@@ -1,0 +1,90 @@
+{
+  "brand": { "name": "باكستيج" },
+  "nav": {
+    "shop": "المتجر",
+    "backstage": "كواليس",
+    "projects": "المشاريع",
+    "mixMatch": "امزج وطابق",
+    "myStage": "مسرحي",
+    "cart": "السلة",
+    "checkout": "الدفع",
+    "login": "دخول",
+    "register": "تسجيل",
+    "logout": "خروج",
+    "admin": "الإدارة",
+    "shopAll": "كل المنتجات"
+  },
+  "home": {
+    "hero": "أثاث معماري، يُبنى بشفافية.",
+    "ctaShop": "تصفّح التشكيلة",
+    "ctaBackstage": "كيف نصنع",
+    "featured": "مختارات",
+    "featuredShopAll": "كل المنتجات",
+    "featuredFrom": "يبدأ من",
+    "newArrivals": "وافد جديد",
+    "newArrivalsSubtitle": "أحدث القطع — استكشف آخر الإضافات."
+  },
+  "shop": {
+    "title": "المتجر",
+    "filterCategory": "الفئة",
+    "filterMaterial": "المادة",
+    "filterColor": "اللون",
+    "filterSize": "المقاس",
+    "filterPrice": "السعر",
+    "clear": "مسح الفلاتر",
+    "empty": "لا توجد منتجات بهذه الفلاتر."
+  },
+  "product": {
+    "from": "يبدأ من",
+    "purchaseOptions": "الخيارات والشراء",
+    "selectVariant": "اختر الخيارات",
+    "addToCart": "أضف للسلة",
+    "inStock": "متوفر",
+    "outOfStock": "غير متوفر"
+  },
+  "cart": {
+    "title": "سلة التسوق",
+    "empty": "سلتك فارغة.",
+    "subtotal": "المجموع الفرعي",
+    "continue": "متابعة التسوق",
+    "toCheckout": "إتمام الطلب"
+  },
+  "checkout": {
+    "title": "الدفع",
+    "email": "البريد",
+    "phone": "الهاتف",
+    "line1": "العنوان ١",
+    "line2": "العنوان ٢",
+    "city": "المدينة",
+    "zone": "منطقة التوصيل",
+    "cod": "الدفع عند الاستلام",
+    "placeOrder": "تأكيد الطلب",
+    "success": "تم استلام الطلب"
+  },
+  "myStage": {
+    "title": "مسرحي",
+    "orders": "الطلبات",
+    "wishlist": "المفضلة",
+    "addresses": "العناوين"
+  },
+  "backstage": {
+    "title": "الكواليس"
+  },
+  "projects": {
+    "title": "المشاريع"
+  },
+  "mixMatch": {
+    "title": "امزج وطابق",
+    "start": "ابدأ الاختبار",
+    "result": "نتيجتك"
+  },
+  "contact": {
+    "title": "تواصل",
+    "submit": "إرسال",
+    "thankYou": "شكراً — سنعود إليك قريباً."
+  },
+  "newsletter": {
+    "placeholder": "البريد",
+    "submit": "اشترك"
+  }
+}

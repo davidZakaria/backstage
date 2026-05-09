@@ -1,6 +1,6 @@
 import { prisma } from "@/lib/prisma";
 import { hashPassword } from "@/lib/auth/password";
-import { signSession } from "@/lib/auth/session";
+import { appendSessionCookie } from "@/lib/auth/session";
 import { UserRole } from "@prisma/client";
 import { NextResponse } from "next/server";
 import { z } from "zod";
@@ -26,6 +26,7 @@ export async function POST(req: Request) {
       role: UserRole.CUSTOMER,
     },
   });
-  await signSession({ sub: user.id, email: user.email, role: user.role });
-  return NextResponse.json({ ok: true });
+  const res = NextResponse.json({ ok: true });
+  await appendSessionCookie(res, { sub: user.id, email: user.email, role: user.role });
+  return res;
 }

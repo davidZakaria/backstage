@@ -2,6 +2,8 @@
 
 Target: single VPS, access by **IP** (no domain yet), [GitHub repo](https://github.com/davidZakaria/backstage.git), PostgreSQL on the same machine.
 
+**Copy your local DB + product image URLs to production:** see **[deploy/SYNC-LOCAL-TO-VPS.md](./SYNC-LOCAL-TO-VPS.md)** (`pg_dump` / `pg_restore`, or `npm run db:seed` for demo-only).
+
 ## Sharing the VPS with another app (do not disrupt it)
 
 Use **separate resources** so nothing conflicts:

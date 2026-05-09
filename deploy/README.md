@@ -178,6 +178,18 @@ Allow what you actually expose:
 
 Then `sudo ufw enable` only if you are sure you will not lock yourself out.
 
+After **`git pull`**, re-copy the Nginx snippet (or merge the `proxy_set_header` lines), then:
+
+```bash
+sudo nginx -t && sudo systemctl reload nginx
+```
+
+If redirects still point at **:3001**, set in **`.env`** (then **`npm run build`** and **`pm2 restart backstage`** — `NEXT_PUBLIC_*` is inlined at build time):
+
+```env
+NEXT_PUBLIC_SITE_URL=http://YOUR_PUBLIC_IP:8080
+```
+
 ## Updates (GitHub pull)
 
 ```bash

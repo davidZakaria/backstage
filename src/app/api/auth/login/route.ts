@@ -1,6 +1,6 @@
 import { prisma } from "@/lib/prisma";
 import { verifyPassword } from "@/lib/auth/password";
-import { signSession } from "@/lib/auth/session";
+import { appendSessionCookie } from "@/lib/auth/session";
 import { NextResponse } from "next/server";
 import { z } from "zod";
 
@@ -17,6 +17,7 @@ export async function POST(req: Request) {
   if (!user) return NextResponse.json({ error: "Invalid credentials" }, { status: 401 });
   const ok = await verifyPassword(p.data.password, user.passwordHash);
   if (!ok) return NextResponse.json({ error: "Invalid credentials" }, { status: 401 });
-  await signSession({ sub: user.id, email: user.email, role: user.role });
-  return NextResponse.json({ ok: true, role: user.role });
+  const res = NextResponse.json({ ok: true, role: user.role });
+  await appendSessionCookie(res, { sub: user.id, email: user.email, role: user.role });
+  return res;
 }

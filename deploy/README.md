@@ -99,7 +99,7 @@ nano .env
 - `DATABASE_URL` / `DIRECT_URL` — PostgreSQL URL for the `backstage` database (same connection string twice is fine without a pooler). Example:  
   `postgresql://backstage_app:YOUR_PASSWORD@localhost:5432/backstage?schema=public`
 - `AUTH_SECRET` — at least 32 random characters: `openssl rand -base64 32`
-- **`NEXT_PUBLIC_SITE_URL`** — for `http://` on port **8080**, use `http://YOUR_PUBLIC_IP:8080` (no trailing slash). Needed for correct redirects and for **session cookies on HTTP** (otherwise admin sign-in appears to work but `/admin` redirects back to login).
+- **`NEXT_PUBLIC_SITE_URL`** — for `http://` on port **8080**, use `http://YOUR_PUBLIC_IP:8080` (no trailing slash). Needed for correct redirects and metadata; session cookies on plain HTTP are non-Secure automatically.
 
 Add **optional** lines from `.env.example`: Supabase and/or Cloudinary if you use file uploads.
 
@@ -193,7 +193,7 @@ If redirects still point at **:3001**, set in **`.env`** (then **`npm run build`
 NEXT_PUBLIC_SITE_URL=http://YOUR_PUBLIC_IP:8080
 ```
 
-**Admin login keeps sending you back to `/admin/login`:** the app uses an HTTP-only session cookie. In production, that cookie is **Secure** on HTTPS. On **plain HTTP** (`http://IP:8080`), you must set **`NEXT_PUBLIC_SITE_URL`** to that same `http://...:8080` origin (no trailing slash) so the server issues a **non-Secure** cookie. **`pm2 restart backstage`** is enough for the cookie change; rebuild is still recommended so storefront metadata matches. If it still fails, set **`AUTH_COOKIE_SECURE=false`** in `.env` and restart.
+**Admin login keeps sending you back to `/admin/login`:** session cookies are **Secure** only when **`NEXT_PUBLIC_SITE_URL`** starts with **`https://`**. On **`http://IP:8080`** they are non-Secure by default (no extra variable). **`git pull`**, **`npm run build`**, **`pm2 restart backstage`**. The login API also sets **`Set-Cookie` on the JSON response** so the browser reliably stores the session. If you terminate TLS in Nginx but serve the browser over **HTTPS**, set **`NEXT_PUBLIC_SITE_URL=https://...`** (or **`AUTH_COOKIE_SECURE=true`**).
 
 ## Updates (GitHub pull)
 

@@ -48,6 +48,10 @@ If that email already exists, the row is **updated**: role becomes **ADMIN** and
 
 ## One-time full copy: `pg_dump` → `pg_restore`
 
+### Supabase (or any hosted Postgres with a “pooler”)
+
+Use a **session / direct** connection for **`pg_dump`**, not the **transaction pooler** (often port **6543** / `pgbouncer=true`). In this repo, copy **`DIRECT_URL`** from `.env` (or the dashboard **Session mode** / **Direct** string), not `DATABASE_URL`, when running `pg_dump`. If the dump errors with PgBouncer or prepared statements, that’s usually why.
+
 ### A. On your PC (export local DB)
 
 From the project folder, use the same database as `.env` (`DATABASE_URL`).

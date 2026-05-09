@@ -4,6 +4,17 @@ import { UserRole } from "@prisma/client";
 
 const COOKIE = "session";
 
+/** Browsers do not send Secure cookies on http:// (except some localhost cases). IP:8080 HTTP + NODE_ENV=production would otherwise “log in” but instantly lose the session. */
+function cookieSecure(): boolean {
+  const o = process.env.AUTH_COOKIE_SECURE;
+  if (o === "false" || o === "0") return false;
+  if (o === "true" || o === "1") return true;
+  const site = process.env.NEXT_PUBLIC_SITE_URL?.trim() ?? "";
+  if (site.startsWith("http://")) return false;
+  if (site.startsWith("https://")) return true;
+  return process.env.NODE_ENV === "production";
+}
+
 function getSecret() {
   const s = process.env.AUTH_SECRET;
   if (!s || s.length < 16) {
@@ -33,7 +44,7 @@ export async function signSession(payload: SessionPayload, maxAgeSec = 60 * 60 *
   store.set(COOKIE, token, {
     httpOnly: true,
     sameSite: "lax",
-    secure: process.env.NODE_ENV === "production",
+    secure: cookieSecure(),
     path: "/",
     maxAge: maxAgeSec,
   });

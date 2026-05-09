@@ -6,6 +6,15 @@ In this app, **product and project images are not files on disk** — each `Medi
 
 ---
 
+## Push local categories, products, and everything you filled in Admin
+
+**Yes.** Anything you created locally — **categories**, **products**, **variants**, **shipping**, **content**, **projects**, **media URLs**, **orders**, **users** — is stored in **Postgres**. The app does **not** have a separate “export categories” button.
+
+- **To copy all of that to the VPS:** use a full database dump from your PC → restore on the server (**next section** and **`pg_dump` → `pg_restore`** below). That overwrites the **`backstage`** database contents (after you back up production if needed).
+- **`npm run db:seed` on the VPS** only installs the **fixed demo data** from `prisma/seed.ts`. It does **not** read what you typed on your laptop.
+
+---
+
 ## Before you start
 
 1. **Back up production** (on the VPS) if it already has data you care about:
